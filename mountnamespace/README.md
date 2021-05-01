@@ -14,10 +14,17 @@ sudo useradd container-user
 
 ##create user namespace and mount namespace
 unshare --user --mount  --map-root-user bash --norc
-./newuidmap 15945 100000   1  1
+newuidmap 30531 0 1000 1000
 
 
 ##bind mount a directory
+sudo chown -R $USER:$USER /container_practice
 export CONTAINER_ROOT_FOLDER=/container_practice
 mount --bind ${CONTAINER_ROOT_FOLDER}/fakeroot ${CONTAINER_ROOT_FOLDER}/fakeroot
 cd ${CONTAINER_ROOT_FOLDER}/fakeroot
+
+//this will change the root
+mkdir old_root
+pivot_root . old_root
+PATH=/bin:/sbin:$PATH
+umount -l /old_root => /proc is not available in the new user namespace.
